@@ -46,17 +46,18 @@ class Program
         CREATE TABLE IF NOT EXISTS habits (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
+        habit TEXT NOT NULL,
+        measurement TEXT NOT NULL,
+        goal TEXT NOT NULL,
+        started TEXT NOT NULL,
+        finished TEXT NULL,
         )
         ";
 
-        // goal TEXT,
-        // habit, TEXT NOT NULL,
-        // measurement, TEXT NOT NULL,
         // DateTime
-        //  day, REAL,
+        // day, REAL,
         // week, REAL,
         // month, REAL,
-
         command.ExecuteNonQuery();
         Console.WriteLine("The Habit's Table was created.");
     }

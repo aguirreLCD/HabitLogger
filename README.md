@@ -52,3 +52,33 @@ Microsoft.Data.Sqlite is a lightweight ADO NET provider for SQLite and you can i
 dotnet add package Microsoft.Data.Sqlite
 ```
 
+https://github.com/dotnet/docs/blob/main/samples/snippets/standard/data/sqlite/DateAndTimeSample/Program.cs
+
+SQLite doesn't support primitive DateTime and TimeSpan values. Instead, it provides date and time functions to help you perform operations based on strings and Julian day values;
+
+By default, Microsoft.Data.Sqlite uses strings, but it can also read DateTime values from Julian day values;
+
+And it can read TimeSpan values from values in days;
+
+To write values in days or as Julian day values, set SqliteType to Real;
+
+## Work in progress...
+
+[x] Create Database and Database connection;
+[] Create Table;
+[] Create CRUD Methods:
+[] Create habit;
+[] Display habits;
+[] Update habit;
+[] Delete habit;
+
+## Learning topics:
+
+- Connecting to a Sqlite database;
+- ADO.NET;
+- .NET data access;
+- Microsoft Data SQLite;
+- DB Design;
+- SQL;
+- Testing;
+- Git branches;
