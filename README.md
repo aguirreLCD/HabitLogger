@@ -64,13 +64,13 @@ To write values in days or as Julian day values, set SqliteType to Real;
 
 ## Work in progress...
 
-[x] Create Database and Database connection;
-[] Create Table;
-[] Create CRUD Methods:
-[] Create habit;
-[] Display habits;
-[] Update habit;
-[] Delete habit;
+- [x] Create Database and Database connection;
+- [] Create Table;
+- [] Create CRUD Methods:
+- [] Create habit;
+- [] Display habits;
+- [] Update habit;
+- [] Delete habit;
 
 ## Learning topics:
 
