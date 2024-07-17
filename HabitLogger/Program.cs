@@ -17,10 +17,10 @@ class Program
 
             // C -> Create
             CreateHabitsTable(connection);
-            // InsertHabit(connection);
+            InsertHabit(connection);
 
             // R -> Read
-            // DisplayAllHabits(connection);
+            DisplayAllHabits(connection);
 
             // U -> Update
             // UpdateHabit(connection);
@@ -33,8 +33,8 @@ class Program
         }
 
         // Clean up
-        File.Delete(dataBaseFile);
-        Console.WriteLine("The DataBase file was deleted.");
+        // File.Delete(dataBaseFile);
+        // Console.WriteLine("The DataBase file was deleted.");
     }
 
     static void CreateHabitsTable(SqliteConnection connection)
@@ -46,20 +46,51 @@ class Program
         CREATE TABLE IF NOT EXISTS habits (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        habit TEXT NOT NULL,
-        measurement TEXT NOT NULL,
-        goal TEXT NOT NULL,
-        started TEXT NOT NULL,
-        finished TEXT NULL,
-        )
+        habit TEXT NOT NULL);   
         ";
 
-        // DateTime
-        // day, REAL,
-        // week, REAL,
-        // month, REAL,
         command.ExecuteNonQuery();
+
         Console.WriteLine("The Habit's Table was created.");
     }
 
+
+    static void InsertHabit(SqliteConnection connection)
+    {
+        var command = connection.CreateCommand();
+
+        command.CommandText =
+        @"
+        INSERT INTO habits (name, habit)
+        VALUES ('lili', 'exercise'),
+        ('ginho', 'run');
+        ";
+
+        command.ExecuteNonQuery();
+        Console.WriteLine("Habits inserted.");
+    }
+
+    static void DisplayAllHabits(SqliteConnection connection)
+    {
+        var command = connection.CreateCommand();
+
+        command.CommandText =
+        @"
+        SELECT id, name, habit
+        FROM habits
+        ";
+
+        using (var reader = command.ExecuteReader())
+        {
+            Console.WriteLine("Current Habits in Database:");
+
+            while (reader.Read())
+            {
+                var id = reader.GetInt32(0);
+                var name = reader.GetString(1);
+                var habit = reader.GetString(2);
+                Console.WriteLine($" ID: {id}, Name: {name}, Habit: {habit}");
+            }
+        }
+    }
 }
