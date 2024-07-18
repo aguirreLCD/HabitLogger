@@ -20,7 +20,7 @@ class Program
 
             BulkInsert(connection);
 
-            CreateName(connection);
+            // CreateName(connection);
 
             // CreateHabit(connection);
 
@@ -38,8 +38,8 @@ class Program
         }
 
         // Clean up
-        File.Delete(dataBaseFile);
-        Console.WriteLine("The DataBase file was deleted.");
+        // File.Delete(dataBaseFile);
+        // Console.WriteLine("The DataBase file was deleted.");
     }
 
     static void CreateHabitsTable(SqliteConnection connection)
@@ -58,7 +58,6 @@ class Program
 
         Console.WriteLine("The Habit's Table was created.");
     }
-
 
     static void CreateName(SqliteConnection connection)
     {
@@ -85,7 +84,6 @@ class Program
 
         }
     }
-
 
     static void CreateHabit(SqliteConnection connection)
     {
@@ -133,7 +131,6 @@ class Program
                 Console.WriteLine($"\tName: {reader["name"]}");
 
                 Console.WriteLine($"\tHabit: {reader["habit"]}");
-
             }
 
             // reader.NextResult();
@@ -162,12 +159,15 @@ class Program
         }
     }
 
-
     static void BulkInsert(SqliteConnection connection)
     {
         // #region snippet_BulkInsert
         using (var transaction = connection.BeginTransaction())
         {
+
+            Console.Write("Name: ");
+            var name = Console.ReadLine();
+
             Console.Write("Habit: ");
             var habit = Console.ReadLine();
 
@@ -175,21 +175,19 @@ class Program
 
             command.CommandText =
             @"
-                INSERT INTO habits (habit)
-                VALUES ($habit);
+                INSERT INTO habits (name, habit)
+                VALUES ($name, $habit);
             ";
 
+            command.Parameters.AddWithValue("$name", name);
             command.Parameters.AddWithValue("$habit", habit);
 
             command.ExecuteNonQuery();
 
             transaction.Commit();
 
+            Console.WriteLine($"Name: {name} inserted.");
             Console.WriteLine($"Habit: {habit} inserted.");
-
         }
     }
-
-
-
 }
