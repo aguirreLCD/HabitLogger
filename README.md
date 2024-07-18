@@ -65,12 +65,12 @@ To write values in days or as Julian day values, set SqliteType to Real;
 ## Work in progress...
 
 - [x] Create Database and Database connection;
-- [] Create Table;
-- [] Create CRUD Methods:
-- [] Create habit;
-- [] Display habits;
-- [] Update habit;
-- [] Delete habit;
+- [x] Create Table;
+- [x] Create CRUD Methods:
+- [x] Create habit;
+- [x] Display habits;
+- [x] Update habit;
+- [x] Delete habit;
 
 ## Learning topics:
 
@@ -89,4 +89,4 @@ To write values in days or as Julian day values, set SqliteType to Real;
 - Transactions:
 - Transactions let you group multiple SQL statements into a single unit of work that is committed to the database as one atomic unit;
 
- WHERE habit = '% {$habit} %';
+WHERE habit = '% {$habit} %';

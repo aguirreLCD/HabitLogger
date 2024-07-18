@@ -58,6 +58,13 @@ class Program
                 // validate for menu options
                 while (!acceptableMenuOption.Contains(readInputResult))
                 {
+                    //The application should only be terminated when the user inserts 0.
+                    if (readInputResult == "0")
+                    {
+                        Console.WriteLine("Exiting program...");
+                        return;
+                    }
+
                     Console.WriteLine("Enter your option (or type 0 to exit the program)");
                     Console.WriteLine();
                     readInputResult = Console.ReadLine();
@@ -121,7 +128,7 @@ class Program
                         break;
 
                     case "6": // update - update one habit
-                        UpdateHabit(connection, 3);
+                        UpdateHabit(connection, 7);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
