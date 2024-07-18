@@ -4,35 +4,93 @@ class Program
 {
     static void Main(string[] args)
     {
+        string? readInputResult = "";
+        string? menuSelection = "";
+
+        Console.Clear();
+
+        Console.WriteLine("Welcome to the Habit Logger App in C#");
+        Console.WriteLine("------------------------\n");
+
+        // Ask the user to choose an operation.
+        Console.WriteLine("Your main menu options are:");
+        Console.WriteLine("------------------------\n");
+
+        Console.WriteLine("1. To display the current database, type: 1");
+        Console.WriteLine("2. To display the current users, type: 2");
+        Console.WriteLine("3. To display the current habits, type: 3");
+        Console.WriteLine("4. To display the habits by selected user, type: 4");
+
+        Console.WriteLine("5. To create a new user and habit, type: 5");
+        // Console.WriteLine("6. To create a new user, type: 6");
+        // Console.WriteLine("7. To create a new habit, type: 7");
+
+        var currentDate = DateTime.Now;
+        Console.WriteLine($"{Environment.NewLine}Hello! on {currentDate:d} at {currentDate:t}");
+
+        Console.WriteLine("Enter your option (or type 0 to Exit the program)");
+        Console.WriteLine();
+
+        readInputResult = Console.ReadLine();
+
+        var acceptableMenuOption = "1 2 3 4 5".Split();
+
+        if (readInputResult != null)
+        {
+            // validate for menu options
+            while (!acceptableMenuOption.Contains(readInputResult))
+            {
+                Console.WriteLine("Enter your option (or type 0 to exit the program)");
+                Console.WriteLine();
+                readInputResult = Console.ReadLine();
+            }
+
+            if (!String.IsNullOrEmpty(readInputResult))
+            {
+                menuSelection = readInputResult.ToLower();
+            }
+        }
+
         const string dataBaseFile = "consolehabits.db";
 
-        // A connection string is used to specify how to connect to the database.
         var connectionString = $"Data Source={dataBaseFile}";
 
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
 
-            // call to CRUD Methods
-
             // C->Create
             CreateHabitsTable(connection);
 
-            BulkInsert(connection);
+            // call to CRUD Methods
+            switch (menuSelection)
+            {
+                case "1": // database file
+                    DisplayAllTable(connection);
+                    break;
 
-            // CreateName(connection);
+                case "2": // users
+                    DisplayAllUsers(connection);
+                    break;
 
-            // CreateHabit(connection);
+                case "3": // habits
+                    DisplayAllHabits(connection);
+                    break;
 
-            // // R -> Read
-            // Console.WriteLine("\nDataBase file:");
-            DisplayAllTable(connection);
+                case "4": // display habits by selected user
+                    DisplayAllHabitsByUser(connection);
+                    break;
 
-            // Console.WriteLine("\nUsers:");
-            DisplayAllUsers(connection);
+                case "5": // create new user and habit
+                    CreateNewUser(connection);
+                    break;
 
-            // Console.WriteLine("\nHabits:");
-            DisplayAllHabits(connection);
+                default: // create new user and habit
+                    CreateNewUser(connection);
+                    break;
+
+            }
+
 
             // U -> Update
             // UpdateHabit(connection);
@@ -41,168 +99,197 @@ class Program
             // D -> Delete
             // DeleteHabit(connection);
             // DeleteAllHabits(connection);
-
+            // DisplayAllHabitsByUser(connection);
         }
 
         // // Clean up
-        File.Delete(dataBaseFile);
-        Console.WriteLine("The DataBase file was deleted.");
-    }
+        // File.Delete(dataBaseFile);
+        // Console.WriteLine("The DataBase file was deleted.");
 
-    static void CreateHabitsTable(SqliteConnection connection)
-    {
-        var command = connection.CreateCommand();
 
-        command.CommandText =
-        @"
-        CREATE TABLE IF NOT EXISTS habits (
-        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-        name TEXT NULL,
-        habit TEXT);   
-        ";
-
-        command.ExecuteNonQuery();
-
-        Console.WriteLine("The Habit's Table was created.");
-    }
-
-    static void CreateName(SqliteConnection connection)
-    {
-        using (var transaction = connection.BeginTransaction())
+        static void CreateHabitsTable(SqliteConnection connection)
         {
-            Console.Write("Name: ");
-            string? name = Console.ReadLine();
+            var command = connection.CreateCommand();
 
-            var insertCommand = connection.CreateCommand();
-
-            insertCommand.CommandText =
+            command.CommandText =
             @"
-                INSERT INTO habits (name)
-                VALUES ($name);
-           ";
+            CREATE TABLE IF NOT EXISTS habits (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            name TEXT NULL,
+            habit TEXT);   
+            ";
 
-            insertCommand.Parameters.AddWithValue("$name", name);
+            command.ExecuteNonQuery();
 
-            insertCommand.ExecuteNonQuery();
-
-            transaction.Commit();
-
-            Console.WriteLine($"Name: {name} inserted.");
-
+            // Console.WriteLine("The Habit's Table was created.");
         }
-    }
 
-    static void CreateHabit(SqliteConnection connection)
-    {
-        Console.Write("Habit: ");
-        var habit = Console.ReadLine();
+        // static void CreateName(SqliteConnection connection)
+        // {
+        //     using (var transaction = connection.BeginTransaction())
+        //     {
+        //         Console.Write("Name: ");
+        //         string? name = Console.ReadLine();
 
-        var command = connection.CreateCommand();
+        //         var insertCommand = connection.CreateCommand();
 
-        command.CommandText =
-        @"
-        INSERT INTO habits (habit)
-        VALUES ($habit);
-        ";
+        //         insertCommand.CommandText =
+        //         @"
+        //         INSERT INTO habits (name)
+        //         VALUES ($name);
+        //    ";
 
-        command.Parameters.AddWithValue("$habit", habit);
-        // command.ExecuteScalar();
+        //         insertCommand.Parameters.AddWithValue("$name", name);
 
-        command.ExecuteNonQuery();
+        //         insertCommand.ExecuteNonQuery();
 
-        Console.WriteLine($"Habit: {habit} inserted.");
-    }
+        //         transaction.Commit();
 
-    static void DisplayAllTable(SqliteConnection connection)
-    {
-        var command = connection.CreateCommand();
+        //         Console.WriteLine($"Name: {name} inserted.");
 
-        command.CommandText =
-        @"
+        //     }
+        // }
+
+        // static void CreateHabit(SqliteConnection connection)
+        // {
+        //     Console.Write("Habit: ");
+        //     var habit = Console.ReadLine();
+
+        //     var command = connection.CreateCommand();
+
+        //     command.CommandText =
+        //     @"
+        // INSERT INTO habits (habit)
+        // VALUES ($habit);
+        // ";
+
+        //     command.Parameters.AddWithValue("$habit", habit);
+
+        //     command.ExecuteNonQuery();
+
+        //     Console.WriteLine($"Habit: {habit} inserted.");
+        // }
+
+        static void DisplayAllTable(SqliteConnection connection)
+        {
+            var command = connection.CreateCommand();
+
+            command.CommandText =
+            @"
             SELECT *
             FROM habits;
         ";
 
-        using (var reader = command.ExecuteReader())
-        {
-            Console.WriteLine("\nCurrent Database:");
-
-            while (reader.Read())
+            using (var reader = command.ExecuteReader())
             {
-                Console.WriteLine($"ID: {reader["id"]}, Name: {reader["name"]}, Habit: {reader["habit"]}");
+                Console.WriteLine("\nCurrent Database:");
+
+                while (reader.Read())
+                {
+                    Console.WriteLine($"ID: {reader["id"]}, Name: {reader["name"]}, Habit: {reader["habit"]}");
+                }
             }
         }
-    }
 
-    static void DisplayAllHabits(SqliteConnection connection)
-    {
-        var command = connection.CreateCommand();
+        static void DisplayAllHabits(SqliteConnection connection)
+        {
+            var command = connection.CreateCommand();
 
-        command.CommandText =
-        @"
+            command.CommandText =
+            @"
             SELECT habit
             FROM habits;
         ";
 
-        using (var reader = command.ExecuteReader())
-        {
-            Console.WriteLine("\nCurrent Habits in Database:");
-
-            while (reader.Read())
+            using (var reader = command.ExecuteReader())
             {
-                Console.WriteLine($"\tHabit: {reader["habit"]}");
+                Console.WriteLine("\nCurrent Habits in Database:");
+
+                while (reader.Read())
+                {
+                    Console.WriteLine($"\tHabit: {reader["habit"]}");
+                }
             }
         }
-    }
 
-    static void DisplayAllUsers(SqliteConnection connection)
-    {
-        var command = connection.CreateCommand();
+        static void DisplayAllUsers(SqliteConnection connection)
+        {
+            var command = connection.CreateCommand();
 
-        command.CommandText =
-        @"
+            command.CommandText =
+            @"
             SELECT id, name
             FROM habits;
         ";
 
-        using (var reader = command.ExecuteReader())
-        {
-            Console.WriteLine("\nCurrent Users in Database:");
-
-            while (reader.Read())
+            using (var reader = command.ExecuteReader())
             {
-                Console.WriteLine($"ID: {reader["id"]}, Name: {reader["name"]}");
+                Console.WriteLine("\nCurrent Users in Database:");
+
+                while (reader.Read())
+                {
+                    Console.WriteLine($"ID: {reader["id"]}, Name: {reader["name"]}");
+                }
             }
         }
-    }
-    static void BulkInsert(SqliteConnection connection)
-    {
-        using (var transaction = connection.BeginTransaction())
-        {
-            Console.Write("Name: ");
-            var name = Console.ReadLine();
 
-            Console.Write("Habit: ");
-            var habit = Console.ReadLine();
+        static void CreateNewUser(SqliteConnection connection)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                Console.Write("Name: ");
+                var name = Console.ReadLine();
+
+                Console.Write("Habit: ");
+                var habit = Console.ReadLine();
+
+                var command = connection.CreateCommand();
+
+                command.CommandText =
+                @"
+                INSERT INTO habits (name, habit)
+                VALUES ($name, $habit);
+            ";
+
+                command.Parameters.AddWithValue("$name", name);
+                command.Parameters.AddWithValue("$habit", habit);
+
+                command.ExecuteNonQuery();
+
+                transaction.Commit();
+
+                Console.WriteLine();
+                Console.WriteLine($"Name: {name} inserted.");
+                Console.WriteLine($"Habit: {habit} inserted.");
+            }
+        }
+
+        static void DisplayAllHabitsByUser(SqliteConnection connection)
+        {
+
+            Console.Write("Type the name you want to show user's habits: ");
+            var name = Console.ReadLine();
 
             var command = connection.CreateCommand();
 
             command.CommandText =
             @"
-                INSERT INTO habits (name, habit)
-                VALUES ($name, $habit);
-            ";
+            SELECT habit
+            FROM habits
+            WHERE name = $name;
+        ";
 
             command.Parameters.AddWithValue("$name", name);
-            command.Parameters.AddWithValue("$habit", habit);
 
-            command.ExecuteNonQuery();
+            using (var reader = command.ExecuteReader())
+            {
+                Console.WriteLine($"\nCurrent {name}'s habits:");
 
-            transaction.Commit();
-
-            Console.WriteLine();
-            Console.WriteLine($"Name: {name} inserted.");
-            Console.WriteLine($"Habit: {habit} inserted.");
+                while (reader.Read())
+                {
+                    Console.WriteLine($"- {reader["habit"]}");
+                }
+            }
         }
     }
 }
