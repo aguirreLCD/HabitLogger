@@ -51,7 +51,7 @@ class Program
 
             readInputResult = Console.ReadLine();
 
-            var acceptableMenuOption = "1 2 3 4 5 6".Split();
+            var acceptableMenuOption = "1 2 3 4 5 6 7".Split();
 
             if (readInputResult != null)
             {
@@ -122,6 +122,14 @@ class Program
 
                     case "6": // update - update one habit
                         UpdateHabit(connection, 3);
+
+                        Console.WriteLine("\n\rPress the Enter key to continue.");
+                        readInputResult = Console.ReadLine();
+                        break;
+
+                    case "7": // delete - delete one habit
+                        // DeleteHabitById(connection, 3);
+                        DeleteHabit(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
@@ -332,6 +340,57 @@ class Program
 
                 Console.WriteLine();
                 Console.WriteLine($"Habit: {habit}\t {quantity} updated.");
+            }
+
+        }
+
+        static void DeleteHabitById(SqliteConnection connection, int id)
+        {
+            using (var updateTransaction = connection.BeginTransaction())
+            {
+                var command = connection.CreateCommand();
+
+                command.CommandText =
+                @"
+                    DELETE FROM habits
+                    WHERE id = $id;
+                ";
+                command.Parameters.AddWithValue("$id", id);
+
+                command.ExecuteNonQuery();
+
+                updateTransaction.Commit();
+
+                Console.WriteLine();
+                Console.WriteLine($"Habit: {id} deleted.");
+            }
+
+        }
+
+
+        static void DeleteHabit(SqliteConnection connection)
+        {
+            using (var deleteTransaction = connection.BeginTransaction())
+            {
+                Console.Write("habit to delete: ");
+                var habit = Console.ReadLine();
+
+                var command = connection.CreateCommand();
+
+                command.CommandText =
+                @"
+                    DELETE FROM habits
+                    WHERE habit = $habit;
+                ";
+
+                command.Parameters.AddWithValue("$habit", habit);
+
+                command.ExecuteNonQuery();
+
+                deleteTransaction.Commit();
+
+                Console.WriteLine();
+                Console.WriteLine($"Habit: {habit} deleted.");
             }
 
         }
