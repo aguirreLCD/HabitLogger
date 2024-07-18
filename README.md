@@ -88,3 +88,5 @@ To write values in days or as Julian day values, set SqliteType to Real;
 
 - Transactions:
 - Transactions let you group multiple SQL statements into a single unit of work that is committed to the database as one atomic unit;
+
+ WHERE habit = '% {$habit} %';
