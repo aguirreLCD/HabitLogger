@@ -18,10 +18,30 @@ class Program
             Console.WriteLine("Your main menu options are:");
             Console.WriteLine("------------------------\n");
 
-            Console.WriteLine("1. To display the all current database, type: 1");
-            Console.WriteLine("2. To display the all current habits, type: 2");
-            Console.WriteLine("3. To display Info by specific habit, type: 3");
-            Console.WriteLine("4. To create new habit, type: 4");
+            // view table - view
+            Console.WriteLine("1. To display the all current table in database, type: 1");
+
+            // view habit - view
+            Console.WriteLine("2. To display the all current (logged) habits, type: 2");
+
+            // track by habit - search
+            Console.WriteLine("3. To search specific habit, type: 3");
+
+            // track by goal - search
+            Console.WriteLine("4. To search habits related to your goal, type: 4");
+
+            // register one habit - insert
+            Console.WriteLine("5. To create new habit, type: 5");
+
+            // update one habit - update
+            Console.WriteLine("6. To update an habit, type: 6");
+
+            // delete one habit - delete
+            Console.WriteLine("7. To delete an habit, type: 7");
+
+            // delete all habits - delete
+            Console.WriteLine("8. To delete all habits, type: 8");
+
 
             var currentDate = DateTime.Now;
             Console.WriteLine($"{Environment.NewLine}Hello! on {currentDate:d} at {currentDate:t}");
@@ -31,7 +51,7 @@ class Program
 
             readInputResult = Console.ReadLine();
 
-            var acceptableMenuOption = "1 2 3 4".Split();
+            var acceptableMenuOption = "1 2 3 4 5".Split();
 
             if (readInputResult != null)
             {
@@ -65,7 +85,7 @@ class Program
                 // call to CRUD Methods
                 switch (menuSelection)
                 {
-                    case "1": // show database file
+                    case "1": // show table in database
                         DisplayAllTable(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
@@ -79,14 +99,21 @@ class Program
                         readInputResult = Console.ReadLine();
                         break;
 
-                    case "3": // display info by habit
+                    case "3": // search and display info by habit - track by habit
                         DisplayByHabit(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
                         break;
 
-                    case "4": // create new habit
+                    case "4": // search and display info by unit of measurement - track by goal
+                        DisplayByQuantity(connection);
+
+                        Console.WriteLine("\n\rPress the Enter key to continue.");
+                        readInputResult = Console.ReadLine();
+                        break;
+
+                    case "5": // insert - create new habit
                         CreateNewHabit(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
@@ -133,11 +160,16 @@ class Program
 
             using (var reader = command.ExecuteReader())
             {
-                Console.WriteLine("\nCurrent Database:");
+                Console.WriteLine("\nCurrent Habits to keep track:\n");
+                Console.Write("Habit:");
+                Console.Write("\t\t\tGoal:");
+                Console.WriteLine();
 
                 while (reader.Read())
                 {
-                    Console.WriteLine($"ID: {reader["id"]}, Habit: {reader["habit"]} - {reader["quantity"]}");
+                    Console.WriteLine();
+                    Console.Write($"{reader["habit"]}:\t\t");
+                    Console.Write($"{reader["quantity"]}\n");
                 }
             }
         }
@@ -154,11 +186,16 @@ class Program
 
             using (var reader = command.ExecuteReader())
             {
-                Console.WriteLine("\nCurrent Habits in Database:");
+                Console.WriteLine("\nCurrent Logged Habits:\n");
+                Console.Write("Habit:");
+                Console.Write("\t\t\tGoal:");
+                Console.WriteLine();
 
                 while (reader.Read())
                 {
-                    Console.WriteLine($"\tHabit: {reader["habit"]}, Quantity: {reader["quantity"]}");
+                    Console.WriteLine();
+                    Console.Write($"{reader["habit"]}:\t\t");
+                    Console.Write($"{reader["quantity"]}\n");
                 }
             }
         }
@@ -189,14 +226,12 @@ class Program
                 transaction.Commit();
 
                 Console.WriteLine();
-                Console.WriteLine($"Habit: {habit} - {quantity} inserted.");
+                Console.WriteLine($"Habit: {habit}\t{quantity} inserted.");
             }
         }
 
-
         static void DisplayByHabit(SqliteConnection connection)
         {
-
             Console.Write("Type the habit you want to check: ");
             var habit = Console.ReadLine();
 
@@ -213,15 +248,48 @@ class Program
 
             using (var reader = command.ExecuteReader())
             {
-                Console.WriteLine($"\nCurrent habits:");
+                Console.Write("Habit:");
+                Console.Write("\t\t\tGoal:");
+                Console.WriteLine();
 
                 while (reader.Read())
                 {
-                    Console.WriteLine($"- {reader["habit"]} - {reader["quantity"]} ");
+                    Console.WriteLine();
+                    Console.Write($"{reader["habit"]}:\t\t");
+                    Console.Write($"{reader["quantity"]}\n");
                 }
             }
         }
 
+        static void DisplayByQuantity(SqliteConnection connection)
+        {
+            Console.Write("Type the quantity to search for related habit: ");
+            var quantity = Console.ReadLine();
 
+            var command = connection.CreateCommand();
+
+            command.CommandText =
+            @"
+                SELECT habit, quantity
+                FROM habits
+                WHERE quantity = $quantity;
+            ";
+
+            command.Parameters.AddWithValue("$quantity", quantity);
+
+            using (var reader = command.ExecuteReader())
+            {
+                Console.Write("Habit:");
+                Console.Write("\t\t\tGoal:");
+                Console.WriteLine();
+
+                while (reader.Read())
+                {
+                    Console.WriteLine();
+                    Console.Write($"{reader["habit"]}:\t\t");
+                    Console.Write($"{reader["quantity"]}\n");
+                }
+            }
+        }
     }
 }
