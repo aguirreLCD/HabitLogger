@@ -51,7 +51,7 @@ class Program
 
             readInputResult = Console.ReadLine();
 
-            var acceptableMenuOption = "1 2 3 4 5".Split();
+            var acceptableMenuOption = "1 2 3 4 5 6".Split();
 
             if (readInputResult != null)
             {
@@ -120,6 +120,13 @@ class Program
                         readInputResult = Console.ReadLine();
                         break;
 
+                    case "6": // update - update one habit
+                        UpdateHabit(connection, 3);
+
+                        Console.WriteLine("\n\rPress the Enter key to continue.");
+                        readInputResult = Console.ReadLine();
+                        break;
+
                     default:
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
@@ -161,6 +168,7 @@ class Program
             using (var reader = command.ExecuteReader())
             {
                 Console.WriteLine("\nCurrent Habits to keep track:\n");
+                Console.Write("ID:\t\t");
                 Console.Write("Habit:");
                 Console.Write("\t\t\tGoal:");
                 Console.WriteLine();
@@ -168,6 +176,7 @@ class Program
                 while (reader.Read())
                 {
                     Console.WriteLine();
+                    Console.Write($"{reader["id"]}:\t\t");
                     Console.Write($"{reader["habit"]}:\t\t");
                     Console.Write($"{reader["quantity"]}\n");
                 }
@@ -196,6 +205,8 @@ class Program
                     Console.WriteLine();
                     Console.Write($"{reader["habit"]}:\t\t");
                     Console.Write($"{reader["quantity"]}\n");
+                    // Console.Write("Edit\t");
+                    // Console.Write("Delete\n");
                 }
             }
         }
@@ -290,6 +301,39 @@ class Program
                     Console.Write($"{reader["quantity"]}\n");
                 }
             }
+        }
+
+        static void UpdateHabit(SqliteConnection connection, int id)
+        {
+            using (var updateTransaction = connection.BeginTransaction())
+            {
+                Console.Write("Update habit to: ");
+                var habit = Console.ReadLine();
+
+                Console.Write("Update habit goal to: ");
+                var quantity = Console.ReadLine();
+
+                var command = connection.CreateCommand();
+
+                command.CommandText =
+                @"
+                    UPDATE habits
+                    SET habit = $habit, quantity = $quantity
+                    WHERE id = $id;
+                ";
+
+                command.Parameters.AddWithValue("$habit", habit);
+                command.Parameters.AddWithValue("$quantity", quantity);
+                command.Parameters.AddWithValue("$id", id);
+
+                command.ExecuteNonQuery();
+
+                updateTransaction.Commit();
+
+                Console.WriteLine();
+                Console.WriteLine($"Habit: {habit}\t {quantity} updated.");
+            }
+
         }
     }
 }
