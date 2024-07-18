@@ -25,13 +25,13 @@ class Program
             // CreateHabit(connection);
 
             // // R -> Read
-            Console.WriteLine("DataBase file:");
+            // Console.WriteLine("\nDataBase file:");
             DisplayAllTable(connection);
 
-            Console.WriteLine("Users:");
+            // Console.WriteLine("\nUsers:");
             DisplayAllUsers(connection);
 
-            Console.WriteLine("Habits:");
+            // Console.WriteLine("\nHabits:");
             DisplayAllHabits(connection);
 
             // U -> Update
@@ -44,7 +44,7 @@ class Program
 
         }
 
-        // Clean up
+        // // Clean up
         File.Delete(dataBaseFile);
         Console.WriteLine("The DataBase file was deleted.");
     }
@@ -125,44 +125,12 @@ class Program
 
         using (var reader = command.ExecuteReader())
         {
-            Console.WriteLine("Current Habits in Database:");
+            Console.WriteLine("\nCurrent Database:");
 
             while (reader.Read())
             {
-                // var id = reader.GetInt32(0);
-                // var name = reader.GetString(0);
-                // var habit = reader.GetString(2);
-                Console.WriteLine($"ID: {reader["id"]}: {reader["name"]}: {reader["habit"]}");
-                // Console.WriteLine($"\tID: {reader["id"]}");
-
-                // Console.WriteLine($"\tName: {reader["name"]}");
-
-                // Console.WriteLine($"\tHabit: {reader["habit"]}");
+                Console.WriteLine($"ID: {reader["id"]}, Name: {reader["name"]}, Habit: {reader["habit"]}");
             }
-
-            // reader.NextResult();
-
-            // while (reader.Read())
-            // {
-            //     // var id = reader.GetInt32(0);
-            //     // var name = reader.GetString(0);
-            //     // var habit = reader.GetString(0);
-            //     // Console.WriteLine($"Name: {name}");
-            //     Console.Write($"\tName: {reader["name"]}");
-
-            // }
-
-            // reader.NextResult();
-
-            // while (reader.Read())
-            // {
-            //     // var id = reader.GetInt32(0);
-            //     // var name = reader.GetString(0);
-            //     // var habit = reader.GetString(0);
-            //     // Console.WriteLine($"ID: {id}");
-            //     Console.Write($"\tHabit: {reader["habit"]}");
-
-            // }
         }
     }
 
@@ -178,44 +146,12 @@ class Program
 
         using (var reader = command.ExecuteReader())
         {
-            Console.WriteLine("Current Habits in Database:");
+            Console.WriteLine("\nCurrent Habits in Database:");
 
             while (reader.Read())
             {
-                // var id = reader.GetInt32(0);
-                // var name = reader.GetString(0);
-                // var habit = reader.GetString(2);
-                // Console.WriteLine($"ID: {reader["id"]}: {reader["name"]}: {reader["habit"]}");
-                // Console.WriteLine($"\tID: {reader["id"]}");
-
-                // Console.WriteLine($"\tName: {reader["name"]}");
-
                 Console.WriteLine($"\tHabit: {reader["habit"]}");
             }
-
-            // reader.NextResult();
-
-            // while (reader.Read())
-            // {
-            //     // var id = reader.GetInt32(0);
-            //     // var name = reader.GetString(0);
-            //     // var habit = reader.GetString(0);
-            //     // Console.WriteLine($"Name: {name}");
-            //     Console.Write($"\tName: {reader["name"]}");
-
-            // }
-
-            // reader.NextResult();
-
-            // while (reader.Read())
-            // {
-            //     // var id = reader.GetInt32(0);
-            //     // var name = reader.GetString(0);
-            //     // var habit = reader.GetString(0);
-            //     // Console.WriteLine($"ID: {id}");
-            //     Console.Write($"\tHabit: {reader["habit"]}");
-
-            // }
         }
     }
 
@@ -231,21 +167,12 @@ class Program
 
         using (var reader = command.ExecuteReader())
         {
-            Console.WriteLine("Current Users in Database:");
+            Console.WriteLine("\nCurrent Users in Database:");
 
             while (reader.Read())
             {
-                // var id = reader.GetInt32(0);
-                // var name = reader.GetString(0);
-                // var habit = reader.GetString(2);
-                Console.WriteLine($"ID: {reader["id"]}: {reader["name"]}");
-                // Console.WriteLine($"\tID: {reader["id"]}");
-
-                // Console.WriteLine($"\tName: {reader["name"]}");
-
-                // Console.WriteLine($"\tHabit: {reader["habit"]}");
+                Console.WriteLine($"ID: {reader["id"]}, Name: {reader["name"]}");
             }
-
         }
     }
     static void BulkInsert(SqliteConnection connection)
@@ -273,6 +200,7 @@ class Program
 
             transaction.Commit();
 
+            Console.WriteLine();
             Console.WriteLine($"Name: {name} inserted.");
             Console.WriteLine($"Habit: {habit} inserted.");
         }
