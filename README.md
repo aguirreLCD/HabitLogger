@@ -82,3 +82,9 @@ To write values in days or as Julian day values, set SqliteType to Real;
 - SQL;
 - Testing;
 - Git branches;
+
+- Batching:
+- SQLite doesn't natively support batching SQL statements together into a single command. Microsoft.Data.Sqlite does, however, implement statement Batching as a convenience to make it behave more like other ADO.NET providers.
+
+- Transactions:
+- Transactions let you group multiple SQL statements into a single unit of work that is committed to the database as one atomic unit;

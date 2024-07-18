@@ -506,3 +506,10 @@ $RECYCLE.BIN/
 DS_Store
 /.DS_Store
 *DS_Store
+
+
+*.db
+/habits
+/consolehabits
+habits
+consolehabits
