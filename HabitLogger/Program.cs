@@ -43,7 +43,6 @@ class Program
             // delete all habits - delete
             Console.WriteLine("8. To delete all habits, type: 8");
 
-
             var currentDate = DateTime.Now;
             Console.WriteLine($"{Environment.NewLine}Hello! on {currentDate:d} at {currentDate:t}");
 
@@ -65,12 +64,10 @@ class Program
                         Console.WriteLine("Exiting program...");
                         return;
                     }
-
                     Console.WriteLine("Enter your option (or type 0 to exit the program)");
                     Console.WriteLine();
                     readInputResult = Console.ReadLine();
                 }
-
                 if (!String.IsNullOrEmpty(readInputResult))
                 {
                     menuSelection = readInputResult.ToLower();
@@ -89,7 +86,6 @@ class Program
                 {
                     // Open() =>  Opens a connection to the database using the value of ConnectionString.
                     connection.Open();
-
                     // C->Create
                     //It should also create a table in the database, where the habit will be logged.
                     CreateHabitsTable(connection);
@@ -154,10 +150,9 @@ class Program
                         readInputResult = Console.ReadLine();
                         break;
 
-                    case "8": // delete - delete habit by ID
-                        DeleteHabitById(connection, 12);
-                        // DeleteHabit(connection);
-
+                    case "8": // delete - delete all database 
+                              // DeleteHabitById(connection, 12);
+                        DeleteDatabase(connection);
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
                         break;
@@ -168,9 +163,6 @@ class Program
                         break;
                 }
             }
-            // // Clean up
-            // File.Delete(dataBaseFile);
-            // Console.WriteLine("The DataBase file was deleted.");
         }
 
         static void CreateHabitsTable(SqliteConnection connection)
@@ -220,7 +212,6 @@ class Program
                 ";
 
                 command.ExecuteNonQuery();
-
                 transaction.Commit();
 
                 Console.WriteLine("Data inserted on Habit's Table");
@@ -242,18 +233,22 @@ class Program
                 using (var reader = command.ExecuteReader())
                 {
                     Console.WriteLine("\nCurrent Habits to keep track:\n");
-                    Console.Write("ID:\t\t");
-                    Console.Write("Habit:\t\t\t");
-                    Console.Write("Goal:");
-                    Console.WriteLine();
+                    // Console.Write("ID:\t\t");
+                    // Console.Write("Habit:\t\t\t");
+                    // Console.Write("Goal:");
+                    // Console.WriteLine();
+                    Console.WriteLine("{0,-5} {1,-10} {2,15}\n", "ID", "Habit", "Goal");
 
                     //.Read() => Advances to the next row in the result set.
                     while (reader.Read())
                     {
-                        Console.WriteLine();
-                        Console.Write($"{reader["id"]}");
-                        Console.Write($"\t\t{reader["habit"]}");
-                        Console.Write($"\t\t{reader["quantity"]}");
+                        // Console.WriteLine();
+                        Console.WriteLine("{0,-5} {1,-10} {2,15}\n", $"{reader["id"]}", $"{reader["habit"]}", $"{reader["quantity"]}");
+
+                        // Console.WriteLine();
+                        // Console.Write($"{reader["id"]}");
+                        // Console.Write($"{reader["habit"]}");
+                        // Console.Write($"{reader["quantity"]}");
                     }
                     Console.WriteLine();
                 }
@@ -290,9 +285,7 @@ class Program
                         {
                             Console.WriteLine();
                             Console.Write($"{reader["habit"]}");
-                            Console.Write($"\t\t{reader["quantity"]}");
-                            // Console.Write("Edit\t");
-                            // Console.Write("Delete\n");
+                            Console.Write($"\t\t\t{reader["quantity"]}");
                         }
                         Console.WriteLine();
                     }
@@ -334,7 +327,6 @@ class Program
                     command.Parameters.AddWithValue("$quantity", quantity);
 
                     command.ExecuteNonQuery();
-
                     transaction.Commit();
 
                     Console.WriteLine();
@@ -375,20 +367,14 @@ class Program
                         Console.Write("\t\t\tGoal:");
                         Console.WriteLine();
 
-                        // true
                         while (reader.Read())
                         {
                             var habitSearched = reader.GetString(0);
                             var goal = reader.GetString(1);
 
-                            // if (!String.IsNullOrEmpty(habitSearched))
-                            // {
                             Console.WriteLine();
                             Console.Write($"{habitSearched}");
                             Console.Write($"\t\t\t{goal}");
-                            // }
-                            // Console.Write($"{reader["habit"]}");
-                            // Console.Write($"\t\t\t{reader["quantity"]}");
                         }
                         Console.WriteLine();
                     }
@@ -484,9 +470,7 @@ class Program
                     ";
 
                     command.Parameters.AddWithValue("$inputHabit", inputHabit);
-
                     command.Parameters.AddWithValue("$newHabit", newHabit);
-
                     command.Parameters.AddWithValue("$quantity", quantity);
 
                     command.ExecuteNonQuery();
@@ -557,12 +541,37 @@ class Program
 
                     command.Parameters.AddWithValue("$habit", habit);
                     command.ExecuteNonQuery();
-
                     // COMMIT makes all data changes in a transaction permanent.
                     deleteTransaction.Commit();
 
                     Console.WriteLine();
                     Console.WriteLine($"Habit: {habit} deleted.");
+                }
+            }
+            catch (SqliteException message)
+            {
+                Console.WriteLine(message.Message);
+                Console.WriteLine(message.ErrorCode);
+                throw;
+            }
+        }
+
+        static void DeleteDatabase(SqliteConnection connection)
+        {
+            try
+            {
+                using (var deleteAllTransactions = connection.BeginTransaction())
+                {
+                    var command = connection.CreateCommand();
+
+                    command.CommandText =
+                    @"
+                        DELETE FROM habits;
+                    ";
+
+                    command.ExecuteNonQuery();
+                    deleteAllTransactions.Commit();
+                    Console.WriteLine("The DataBase file was deleted.");
                 }
             }
             catch (SqliteException message)
