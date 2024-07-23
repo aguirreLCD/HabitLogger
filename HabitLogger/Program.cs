@@ -139,7 +139,7 @@ class Program
                         break;
 
                     case "6": // update - update one habit
-                        UpdateHabit(connection, 14);
+                        UpdateHabit(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
@@ -154,7 +154,7 @@ class Program
                         break;
 
                     case "8": // delete - delete habit by ID
-                        DeleteHabitById(connection, 15);
+                        DeleteHabitById(connection, 12);
                         // DeleteHabit(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
@@ -256,15 +256,22 @@ class Program
                     Console.Write("Goal:");
                     Console.WriteLine();
 
-                    while (reader.Read())
+                    if (reader.HasRows)
                     {
+                        while (reader.Read())
+                        {
+                            Console.WriteLine();
+                            Console.Write($"{reader["habit"]}");
+                            Console.Write($"\t\t{reader["quantity"]}");
+                            // Console.Write("Edit\t");
+                            // Console.Write("Delete\n");
+                        }
                         Console.WriteLine();
-                        Console.Write($"{reader["habit"]}");
-                        Console.Write($"\t\t{reader["quantity"]}");
-                        // Console.Write("Edit\t");
-                        // Console.Write("Delete\n");
                     }
-                    Console.WriteLine();
+                    else
+                    {
+                        Console.WriteLine("No habits found.");
+                    }
                 }
             }
             catch (SqliteException message)
@@ -330,27 +337,34 @@ class Program
 
                 using (var reader = command.ExecuteReader())
                 {
-                    Console.WriteLine();
-                    Console.Write("Habit:");
-                    Console.Write("\t\t\tGoal:");
-                    Console.WriteLine();
-                    // true
-                    while (reader.Read())
+                    if (reader.HasRows)
                     {
-                        var habitSearched = reader.GetString(0);
-                        var goal = reader.GetString(1);
-
-                        // if (!String.IsNullOrEmpty(habitSearched))
-                        // {
                         Console.WriteLine();
-                        Console.Write($"{habitSearched}");
-                        Console.Write($"\t\t\t{goal}");
-                        // }
-                        // Console.Write($"{reader["habit"]}");
-                        // Console.Write($"\t\t\t{reader["quantity"]}");
+                        Console.Write("Habit:");
+                        Console.Write("\t\t\tGoal:");
+                        Console.WriteLine();
+
+                        // true
+                        while (reader.Read())
+                        {
+                            var habitSearched = reader.GetString(0);
+                            var goal = reader.GetString(1);
+
+                            // if (!String.IsNullOrEmpty(habitSearched))
+                            // {
+                            Console.WriteLine();
+                            Console.Write($"{habitSearched}");
+                            Console.Write($"\t\t\t{goal}");
+                            // }
+                            // Console.Write($"{reader["habit"]}");
+                            // Console.Write($"\t\t\t{reader["quantity"]}");
+                        }
+                        Console.WriteLine();
                     }
-                    Console.WriteLine();
-                    // Console.WriteLine("No logged habits with this goal.");
+                    else
+                    {
+                        Console.WriteLine("No logged habits found.");
+                    }
                 }
             }
             catch (SqliteException message)
@@ -378,27 +392,30 @@ class Program
 
                 using (var reader = command.ExecuteReader())
                 {
-                    Console.WriteLine();
-                    Console.Write("Habit:");
-                    Console.Write("\t\tGoal:");
-                    Console.WriteLine();
-
-                    while (reader.Read())
+                    if (reader.HasRows)
                     {
-                        var habitSearched = reader.GetString(0);
-                        var goal = reader.GetString(1);
-
                         Console.WriteLine();
-                        // Console.Write($"{reader["habit"]}");
-                        Console.Write($"{habitSearched}");
-                        // Console.Write($"\t\t{reader["quantity"]}");
-                        Console.Write($"\t\t{goal}");
+                        Console.Write("Habit:");
+                        Console.Write("\t\tGoal:");
+                        Console.WriteLine();
+
+                        while (reader.Read())
+                        {
+                            var habitSearched = reader.GetString(0);
+                            var goal = reader.GetString(1);
+
+                            Console.WriteLine();
+                            // Console.Write($"{reader["habit"]}");
+                            Console.Write($"{habitSearched}");
+                            // Console.Write($"\t\t{reader["quantity"]}");
+                            Console.Write($"\t\t{goal}");
+                        }
+                        Console.WriteLine();
                     }
-                    Console.WriteLine();
-                    // if (reader.Read() == false)
-                    // {
-                    //     Console.WriteLine("No logged habits with this goal.");
-                    // }
+                    else
+                    {
+                        Console.WriteLine("No logged habits found with this goal.");
+                    }
                 }
             }
             catch (SqliteException message)
@@ -407,16 +424,19 @@ class Program
             }
         }
 
-        static void UpdateHabit(SqliteConnection connection, int id)
+        static void UpdateHabit(SqliteConnection connection)
         {
             try
             {
                 using (var updateTransaction = connection.BeginTransaction())
                 {
-                    Console.Write("Update habit to: ");
-                    var habit = Console.ReadLine();
+                    Console.Write("Type the habit you want to update: ");
+                    var inputHabit = Console.ReadLine();
 
-                    Console.Write("Update habit goal to: ");
+                    Console.Write("Type the new habit: ");
+                    var newHabit = Console.ReadLine();
+
+                    Console.Write("Type the new goal: ");
                     var quantity = Console.ReadLine();
 
                     var command = connection.CreateCommand();
@@ -424,13 +444,15 @@ class Program
                     command.CommandText =
                     @"
                         UPDATE habits
-                        SET habit = $habit, quantity = $quantity
-                        WHERE id = $id;
+                        SET habit = $newHabit, quantity = $quantity
+                        WHERE habit = $inputHabit;
                     ";
 
-                    command.Parameters.AddWithValue("$habit", habit);
+                    command.Parameters.AddWithValue("$inputHabit", inputHabit);
+
+                    command.Parameters.AddWithValue("$newHabit", newHabit);
+
                     command.Parameters.AddWithValue("$quantity", quantity);
-                    command.Parameters.AddWithValue("$id", id);
 
                     command.ExecuteNonQuery();
 
@@ -438,7 +460,7 @@ class Program
                     updateTransaction.Commit();
 
                     Console.WriteLine();
-                    Console.WriteLine($"Habit: {habit}\t {quantity} updated.");
+                    Console.WriteLine($"Habit: {newHabit}\t {quantity} updated.");
                 }
             }
             catch (SqliteException message)
