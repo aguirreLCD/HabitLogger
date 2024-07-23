@@ -96,8 +96,8 @@ class Program
                 }
                 catch (SqliteException message)
                 {
-                    Console.WriteLine(message);
-                    // Console.WriteLine(errorCode);
+                    Console.WriteLine(message.Message);
+                    Console.WriteLine(message.ErrorCode);   // Console.WriteLine(errorCode);
                 }
 
                 // call to CRUD Methods
@@ -111,6 +111,7 @@ class Program
                         break;
 
                     case "2": // show all habits
+                        SeedHabitsTable(connection);
                         DisplayAllHabits(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
@@ -194,12 +195,37 @@ class Program
             }
             catch (SqliteException message)
             {
-                Console.WriteLine(message);
-                // Console.WriteLine(errorCode);
+                Console.WriteLine(message.Message);
+                Console.WriteLine(message.ErrorCode);
+                throw;
             }
             // Console.WriteLine("The Habit's Table was created.");
         }
 
+
+        static void SeedHabitsTable(SqliteConnection connection)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                var command = connection.CreateCommand();
+
+                command.CommandText =
+                @"
+                    INSERT INTO habits (habit, quantity)
+                    VALUES ('Hello World', 'days'),
+                            ('Learn SQLite', 'days'),
+                            ('Learn .NET', 'days'),
+                            ('Testing', 'days'),
+                            ('Debug', 'days');
+                ";
+
+                command.ExecuteNonQuery();
+
+                transaction.Commit();
+
+                Console.WriteLine("Data inserted on Habit's Table");
+            }
+        }
 
         static void DisplayAllTable(SqliteConnection connection)
         {
@@ -217,7 +243,7 @@ class Program
                 {
                     Console.WriteLine("\nCurrent Habits to keep track:\n");
                     Console.Write("ID:\t\t");
-                    Console.Write("Habit:\t\t");
+                    Console.Write("Habit:\t\t\t");
                     Console.Write("Goal:");
                     Console.WriteLine();
 
@@ -234,7 +260,9 @@ class Program
             }
             catch (SqliteException message)
             {
-                Console.WriteLine(message);
+                Console.WriteLine(message.Message);
+                Console.WriteLine(message.ErrorCode);
+                throw;
             }
         }
 
@@ -252,7 +280,7 @@ class Program
                 using (var reader = command.ExecuteReader())
                 {
                     Console.WriteLine("\nCurrent Logged Habits:\n");
-                    Console.Write("Habit:\t\t");
+                    Console.Write("Habit:\t\t\t");
                     Console.Write("Goal:");
                     Console.WriteLine();
 
@@ -276,7 +304,9 @@ class Program
             }
             catch (SqliteException message)
             {
-                Console.WriteLine(message);
+                Console.WriteLine(message.Message);
+                Console.WriteLine(message.ErrorCode);
+                throw;
             }
         }
 
@@ -313,8 +343,9 @@ class Program
             }
             catch (SqliteException message)
             {
-                Console.WriteLine(message);
-                Console.WriteLine("throw exception");
+                Console.WriteLine(message.Message);
+                Console.WriteLine(message.ErrorCode);
+                throw;
             }
         }
 
@@ -369,7 +400,9 @@ class Program
             }
             catch (SqliteException message)
             {
-                Console.WriteLine(message);
+                Console.WriteLine(message.Message);
+                Console.WriteLine(message.ErrorCode);
+                throw;
             }
         }
 
@@ -420,7 +453,9 @@ class Program
             }
             catch (SqliteException message)
             {
-                Console.WriteLine(message);
+                Console.WriteLine(message.Message);
+                Console.WriteLine(message.ErrorCode);
+                throw;
             }
         }
 
@@ -465,7 +500,9 @@ class Program
             }
             catch (SqliteException message)
             {
-                Console.WriteLine(message);
+                Console.WriteLine(message.Message);
+                Console.WriteLine(message.ErrorCode);
+                throw;
             }
         }
 
@@ -494,7 +531,9 @@ class Program
             }
             catch (SqliteException message)
             {
-                Console.WriteLine(message);
+                Console.WriteLine(message.Message);
+                Console.WriteLine(message.ErrorCode);
+                throw;
             }
         }
 
@@ -505,7 +544,7 @@ class Program
             {
                 using (var deleteTransaction = connection.BeginTransaction())
                 {
-                    Console.Write("habit to delete: ");
+                    Console.Write("Type the habit you want to delete: ");
                     var habit = Console.ReadLine();
 
                     var command = connection.CreateCommand();
@@ -528,7 +567,9 @@ class Program
             }
             catch (SqliteException message)
             {
-                Console.WriteLine(message);
+                Console.WriteLine(message.Message);
+                Console.WriteLine(message.ErrorCode);
+                throw;
             }
         }
     }
