@@ -72,6 +72,17 @@ To write values in days or as Julian day values, set SqliteType to Real;
 - [x] Update habit;
 - [x] Delete habit;
 - [] Handle errors:
+
+  - SqliteException is thrown when a SQLite error is encountered.
+  - The message is provided by SQLite.
+  - The SqliteErrorCode and SqliteExtendedErrorCode properties contain the SQLite result code of the error.
+
+  - Common scenarios where errors can occur:
+  - Opening a connection.
+  - Beginning a transaction.
+  - Executing a command.
+  - Calling NextResult.
+
 - [] Handle deleted database;
 - [] Handle deleted habit;
 - [] Handle updated habit;
