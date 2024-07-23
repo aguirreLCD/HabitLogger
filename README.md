@@ -71,6 +71,12 @@ To write values in days or as Julian day values, set SqliteType to Real;
 - [x] Display habits;
 - [x] Update habit;
 - [x] Delete habit;
+- [] Handle errors:
+- [] Handle deleted database;
+- [] Handle deleted habit;
+- [] Handle updated habit;
+- [] Test;
+- [] Publish;
 
 ## Learning topics:
 
@@ -89,4 +95,6 @@ To write values in days or as Julian day values, set SqliteType to Real;
 - Transactions:
 - Transactions let you group multiple SQL statements into a single unit of work that is committed to the database as one atomic unit;
 
-WHERE habit = '% {$habit} %';
+<!-- WHERE habit = '% {$habit} %'; -->
+
+- LINQ: Runs SQL statements written like language constructs to query collections directly from inside .Net code
