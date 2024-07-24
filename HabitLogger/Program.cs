@@ -80,6 +80,8 @@ class Program
             var connectionString = $"Data Source={dataBaseFile}";
 
             // SqliteConnection() => Represents a connection to a SQLite database.
+            // instance of a SQLite connection class
+            // using statement => to use garbage colector properly
             using (var connection = new SqliteConnection(connectionString))
             {
                 try
@@ -163,27 +165,33 @@ class Program
                         break;
                 }
             }
+            // Clean up
+            // File.Delete(dataBaseFile);
+            // Console.WriteLine("The DataBase file was deleted.");
+
         }
 
         static void CreateHabitsTable(SqliteConnection connection)
         {
             // Creates a new command associated with the connection.
-            var command = connection.CreateCommand();
+            var createTableCommand = connection.CreateCommand();
 
             // Gets or sets the SQL to execute against the database.
             // The SQL to execute against the database.
             try
             {
-                command.CommandText =
+                createTableCommand.CommandText =
                 @"
                     CREATE TABLE IF NOT EXISTS habits (
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     habit TEXT,
-                    quantity TEXT);   
+                    goal TEXT);   
                 ";
 
-                //Executes the CommandText against the database.
-                command.ExecuteNonQuery();
+                // Executes the CommandText against the database.
+                // do not return any values from DB
+                // not querying DB
+                createTableCommand.ExecuteNonQuery();
             }
             catch (SqliteException message)
             {
@@ -203,7 +211,7 @@ class Program
 
                 command.CommandText =
                 @"
-                    INSERT INTO habits (habit, quantity)
+                    INSERT INTO habits (habit, goal)
                     VALUES ('Hello World', 'days'),
                             ('Learn SQLite', 'days'),
                             ('Learn .NET', 'days'),
@@ -243,12 +251,15 @@ class Program
                     while (reader.Read())
                     {
                         // Console.WriteLine();
-                        Console.WriteLine("{0,-5} {1,-10} {2,15}\n", $"{reader["id"]}", $"{reader["habit"]}", $"{reader["quantity"]}");
+                        // Console.WriteLine("{0,-5} {1,0} {2,0}\n", $"{reader["id"]}", $"{reader["habit"]}", $"{reader["goal"]}");
+                        Console.Write("{0,-5}", $"{reader["id"]}");
+                        Console.Write("{0,-10}", $"{reader["habit"]}");
+                        Console.Write("{0,15}", $"{reader["goal"]}");
 
-                        // Console.WriteLine();
+                        Console.WriteLine();
                         // Console.Write($"{reader["id"]}");
                         // Console.Write($"{reader["habit"]}");
-                        // Console.Write($"{reader["quantity"]}");
+                        // Console.Write($"{reader["goal"]}");
                     }
                     Console.WriteLine();
                 }
@@ -268,7 +279,7 @@ class Program
             {
                 command.CommandText =
                 @"
-                    SELECT habit, quantity
+                    SELECT habit, goal
                     FROM habits;
                 ";
 
@@ -285,7 +296,7 @@ class Program
                         {
                             Console.WriteLine();
                             Console.Write($"{reader["habit"]}");
-                            Console.Write($"\t\t\t{reader["quantity"]}");
+                            Console.Write($"\t\t{reader["goal"]}");
                         }
                         Console.WriteLine();
                     }
@@ -312,25 +323,25 @@ class Program
                     Console.Write("New Habit: ");
                     var habit = Console.ReadLine();
 
-                    Console.Write("Quantity: ");
-                    var quantity = Console.ReadLine();
+                    Console.Write("New goal: ");
+                    var goal = Console.ReadLine();
 
                     var command = connection.CreateCommand();
 
                     command.CommandText =
                     @"
-                        INSERT INTO habits (habit, quantity)
-                        VALUES ($habit, $quantity);
+                        INSERT INTO habits (habit, goal)
+                        VALUES ($habit, $goal);
                     ";
 
                     command.Parameters.AddWithValue("$habit", habit);
-                    command.Parameters.AddWithValue("$quantity", quantity);
+                    command.Parameters.AddWithValue("$goal", goal);
 
                     command.ExecuteNonQuery();
                     transaction.Commit();
 
                     Console.WriteLine();
-                    Console.WriteLine($"Habit: {habit}\t{quantity} inserted.");
+                    Console.WriteLine($"Habit: {habit}\t{goal} inserted.");
                 }
             }
             catch (SqliteException message)
@@ -351,7 +362,7 @@ class Program
             {
                 command.CommandText =
                 @"
-                    SELECT habit, quantity
+                    SELECT habit, goal
                     FROM habits
                     WHERE habit = $habit;
                 ";
@@ -395,19 +406,19 @@ class Program
         static void DisplayByGoal(SqliteConnection connection)
         {
             Console.Write("Type the goal to search for: ");
-            var quantity = Console.ReadLine();
+            var goal = Console.ReadLine();
 
             var command = connection.CreateCommand();
             try
             {
                 command.CommandText =
                 @"
-                    SELECT habit, quantity
+                    SELECT habit, goal
                     FROM habits
-                    WHERE quantity = $quantity;
+                    WHERE goal = $goal;
                 ";
 
-                command.Parameters.AddWithValue("$quantity", quantity);
+                command.Parameters.AddWithValue("$goal", goal);
 
                 using (var reader = command.ExecuteReader())
                 {
@@ -421,13 +432,13 @@ class Program
                         while (reader.Read())
                         {
                             var habitSearched = reader.GetString(0);
-                            var goal = reader.GetString(1);
+                            var goalSearched = reader.GetString(1);
 
                             Console.WriteLine();
                             // Console.Write($"{reader["habit"]}");
                             Console.Write($"{habitSearched}");
-                            // Console.Write($"\t\t{reader["quantity"]}");
-                            Console.Write($"\t\t{goal}");
+                            // Console.Write($"\t\t{reader["goal"]}");
+                            Console.Write($"\t\t{goalSearched}");
                         }
                         Console.WriteLine();
                     }
@@ -458,20 +469,20 @@ class Program
                     var newHabit = Console.ReadLine();
 
                     Console.Write("Type the new goal: ");
-                    var quantity = Console.ReadLine();
+                    var newGoal = Console.ReadLine();
 
                     var command = connection.CreateCommand();
 
                     command.CommandText =
                     @"
                         UPDATE habits
-                        SET habit = $newHabit, quantity = $quantity
+                        SET habit = $newHabit, goal = $newGoal
                         WHERE habit = $inputHabit;
                     ";
 
                     command.Parameters.AddWithValue("$inputHabit", inputHabit);
                     command.Parameters.AddWithValue("$newHabit", newHabit);
-                    command.Parameters.AddWithValue("$quantity", quantity);
+                    command.Parameters.AddWithValue("$newGoal", newGoal);
 
                     command.ExecuteNonQuery();
 
@@ -479,7 +490,7 @@ class Program
                     updateTransaction.Commit();
 
                     Console.WriteLine();
-                    Console.WriteLine($"Habit: {newHabit}\t {quantity} updated.");
+                    Console.WriteLine($"Habit: {newHabit}\t {newGoal} updated.");
                 }
             }
             catch (SqliteException message)

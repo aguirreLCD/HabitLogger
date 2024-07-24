@@ -1,16 +1,16 @@
-This is a project to learn how to:
+# C# .NET Console Application
+
+This is a simple project to learn how to:
 
 - perform CRUD operations against a real database;
 - create and run a .NET console application by using Visual Studio Code and the .NET CLI.
 - use SQLite;
 - use SQLite with C# in VSCode;
 - debug;
-- test;
-- publish;
 
-# Using Visual Studio Code:
+## Using Visual Studio Code:
 
-## Create a Console Application: Habit Logger App
+### Create a Console Application: Habit Logger App
 
 ```
 Create a new folder => HabitLogger
@@ -22,6 +22,12 @@ Choose a Project Name
 Run your application by running
 dotnet build
 dotnet run
+```
+
+||
+
+```
+dotnet new console -name --HabitLogger
 ```
 
 ### Create .vscode files to configure build and debug:
@@ -83,11 +89,9 @@ To write values in days or as Julian day values, set SqliteType to Real;
   - Executing a command.
   - Calling NextResult.
 
-- [] Handle deleted database;
-- [] Handle deleted habit;
-- [] Handle updated habit;
-- [] Test;
-- [] Publish;
+- [x] Handle deleted database;
+- [x] Handle deleted habit;
+- [x] Handle updated habit;
 
 ## Learning topics:
 
@@ -97,8 +101,6 @@ To write values in days or as Julian day values, set SqliteType to Real;
 - Microsoft Data SQLite;
 - DB Design;
 - SQL;
-- Testing;
-- Git branches;
 
 - Batching:
 - SQLite doesn't natively support batching SQL statements together into a single command. Microsoft.Data.Sqlite does, however, implement statement Batching as a convenience to make it behave more like other ADO.NET providers.
