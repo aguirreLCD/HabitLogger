@@ -131,8 +131,8 @@ class Program
                         break;
 
                     case "5": // insert - create new habit
-                        CreateNewHabit(connection);
-
+                              // CreateNewHabit(connection);
+                        InsertNewHabit(connection);
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
                         break;
@@ -201,7 +201,6 @@ class Program
             }
             // Console.WriteLine("The Habit's Table was created.");
         }
-
 
         static void SeedHabitsTable(SqliteConnection connection)
         {
@@ -594,6 +593,33 @@ class Program
                 Console.WriteLine(message.Message);
                 Console.WriteLine(message.ErrorCode);
                 throw;
+            }
+        }
+
+// another way to insert values
+        static void InsertNewHabit(SqliteConnection connection)
+        {
+            Console.Write("New Habit: ");
+            var habit = Console.ReadLine();
+
+            Console.Write("New goal: ");
+            var goal = Console.ReadLine();
+
+            using (var insertTransaction = connection.BeginTransaction())
+            {
+                var insertCommand = connection.CreateCommand();
+
+                insertCommand.CommandText =
+                $"INSERT INTO habits(habit, goal) VALUES('{habit}', '{goal}')";
+
+                // insertCommand.Parameters.AddWithValue("$habit", habit);
+                // insertCommand.Parameters.AddWithValue("$goal", goal);
+
+                insertCommand.ExecuteNonQuery();
+                insertTransaction.Commit();
+
+                Console.WriteLine();
+                Console.WriteLine($"Habit: {habit}\t{goal} inserted.");
             }
         }
     }
