@@ -138,7 +138,8 @@ class Program
                         break;
 
                     case "6": // update - update one habit
-                        UpdateHabit(connection);
+                        // UpdateHabit(connection);
+                        UpdateRecord(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
@@ -596,7 +597,7 @@ class Program
             }
         }
 
-// another way to insert values
+        // another way to insert values
         static void InsertNewHabit(SqliteConnection connection)
         {
             Console.Write("New Habit: ");
@@ -621,6 +622,68 @@ class Program
                 Console.WriteLine();
                 Console.WriteLine($"Habit: {habit}\t{goal} inserted.");
             }
+        }
+
+        // another way to update habit
+        static void UpdateRecord(SqliteConnection connection)
+        {
+            Console.Write("Type the habit you want to update: ");
+            var habit = Console.ReadLine();
+
+            var updateCommand = connection.CreateCommand();
+
+            updateCommand.CommandText =
+            $"SELECT habit, goal FROM habits WHERE habit = '{habit}'";
+
+            using (var reader = updateCommand.ExecuteReader())
+            {
+                if (reader.HasRows)
+                {
+                    Console.Write("{0,-20}", "Habit");
+                    Console.Write("{0,-20}", "Goal");
+                    Console.WriteLine();
+
+                    const int FieldWidthRightAligned = -20;
+                    Console.WriteLine();
+
+                    while (reader.Read())
+                    {
+                        var habitSearched = reader.GetString(0);
+                        var goal = reader.GetString(1);
+
+                        Console.Write($"{habitSearched,FieldWidthRightAligned}");
+                        Console.Write($"{goal,FieldWidthRightAligned}\n");
+                        Console.WriteLine();
+                    }
+                    Console.WriteLine();
+                }
+                else
+                {
+                    Console.WriteLine("No logged habits found.");
+                }
+            }
+
+            Console.Write("Type the new habit: ");
+            var newHabit = Console.ReadLine();
+
+            Console.Write("Type the new goal: ");
+            var newGoal = Console.ReadLine();
+
+            using (var updateTransaction = connection.BeginTransaction())
+            {
+                var updateRecordCommand = connection.CreateCommand();
+
+                updateRecordCommand.CommandText =
+                $"UPDATE habits SET habit = '{newHabit}', goal = '{newGoal}' WHERE habit = '{habit}'";
+
+                updateRecordCommand.ExecuteNonQuery();
+
+                updateTransaction.Commit();
+
+                Console.WriteLine();
+                Console.WriteLine($"Habit: {newHabit}\t {newGoal} updated.");
+            }
+
         }
     }
 }
