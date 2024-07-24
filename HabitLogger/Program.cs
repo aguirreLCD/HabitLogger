@@ -165,7 +165,7 @@ class Program
                         break;
                 }
             }
-            // Clean up
+            // // Clean up
             // File.Delete(dataBaseFile);
             // Console.WriteLine("The DataBase file was deleted.");
 
@@ -241,20 +241,20 @@ class Program
                 using (var reader = command.ExecuteReader())
                 {
                     Console.WriteLine("\nCurrent Habits to keep track:\n");
-                    // Console.Write("ID:\t\t");
-                    // Console.Write("Habit:\t\t\t");
-                    // Console.Write("Goal:");
-                    // Console.WriteLine();
-                    Console.WriteLine("{0,-5} {1,-10} {2,15}\n", "ID", "Habit", "Goal");
+                    Console.Write("{0,-20}", "ID");
+                    Console.Write("{0,-20}", "Habit");
+                    Console.Write("{0,-20}", "Goal");
+                    Console.WriteLine();
+
+                    const int FieldWidthLeftAligned = -20;
+                    Console.WriteLine();
 
                     //.Read() => Advances to the next row in the result set.
                     while (reader.Read())
                     {
-                        // Console.WriteLine();
-                        // Console.WriteLine("{0,-5} {1,0} {2,0}\n", $"{reader["id"]}", $"{reader["habit"]}", $"{reader["goal"]}");
-                        Console.Write("{0,-5}", $"{reader["id"]}");
-                        Console.Write("{0,-10}", $"{reader["habit"]}");
-                        Console.Write("{0,15}", $"{reader["goal"]}");
+                        Console.Write($"{reader["id"],FieldWidthLeftAligned}");
+                        Console.Write($"{reader["habit"],FieldWidthLeftAligned}");
+                        Console.Write($"{reader["goal"],FieldWidthLeftAligned}\n");
 
                         Console.WriteLine();
                         // Console.Write($"{reader["id"]}");
@@ -286,17 +286,19 @@ class Program
                 using (var reader = command.ExecuteReader())
                 {
                     Console.WriteLine("\nCurrent Logged Habits:\n");
-                    Console.Write("Habit:\t\t\t");
-                    Console.Write("Goal:");
+                    Console.Write("{0,-20}", "Habit");
+                    Console.Write("{0,0}", "Goal");
                     Console.WriteLine();
 
                     if (reader.HasRows)
                     {
+                        const int FieldWidthRightAligned = -20;
+                        Console.WriteLine();
+
                         while (reader.Read())
                         {
-                            Console.WriteLine();
-                            Console.Write($"{reader["habit"]}");
-                            Console.Write($"\t\t{reader["goal"]}");
+                            Console.Write($"{reader["habit"],FieldWidthRightAligned}");
+                            Console.Write($"{reader["goal"],FieldWidthRightAligned}\n");
                         }
                         Console.WriteLine();
                     }
@@ -373,9 +375,11 @@ class Program
                 {
                     if (reader.HasRows)
                     {
+                        Console.Write("{0,-20}", "Habit");
+                        Console.Write("{0,-20}", "Goal");
                         Console.WriteLine();
-                        Console.Write("Habit:");
-                        Console.Write("\t\t\tGoal:");
+
+                        const int FieldWidthRightAligned = -20;
                         Console.WriteLine();
 
                         while (reader.Read())
@@ -383,9 +387,9 @@ class Program
                             var habitSearched = reader.GetString(0);
                             var goal = reader.GetString(1);
 
+                            Console.Write($"{habitSearched,FieldWidthRightAligned}");
+                            Console.Write($"{goal,FieldWidthRightAligned}\n");
                             Console.WriteLine();
-                            Console.Write($"{habitSearched}");
-                            Console.Write($"\t\t\t{goal}");
                         }
                         Console.WriteLine();
                     }
@@ -424,9 +428,11 @@ class Program
                 {
                     if (reader.HasRows)
                     {
+                        Console.Write("{0,-20}", "Habit");
+                        Console.Write("{0,-20}", "Goal");
                         Console.WriteLine();
-                        Console.Write("Habit:");
-                        Console.Write("\t\tGoal:");
+
+                        const int FieldWidthRightAligned = -20;
                         Console.WriteLine();
 
                         while (reader.Read())
@@ -434,11 +440,9 @@ class Program
                             var habitSearched = reader.GetString(0);
                             var goalSearched = reader.GetString(1);
 
+                            Console.Write($"{habitSearched,FieldWidthRightAligned}");
+                            Console.Write($"{goalSearched,FieldWidthRightAligned}\n");
                             Console.WriteLine();
-                            // Console.Write($"{reader["habit"]}");
-                            Console.Write($"{habitSearched}");
-                            // Console.Write($"\t\t{reader["goal"]}");
-                            Console.Write($"\t\t{goalSearched}");
                         }
                         Console.WriteLine();
                     }

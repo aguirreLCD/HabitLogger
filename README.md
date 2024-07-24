@@ -92,6 +92,9 @@ To write values in days or as Julian day values, set SqliteType to Real;
 - [x] Handle deleted database;
 - [x] Handle deleted habit;
 - [x] Handle updated habit;
+- [x] formatting:
+      using alignment element: The constant expression whose value defines the minimum number of characters in the string representation of the expression result. If positive, the string representation is right-aligned; if negative, it's left-aligned. (Alignment component -> Composite formatting);
+- [] reviewing, connecting pieces, reinforcing learning topics;
 
 ## Learning topics:
 
