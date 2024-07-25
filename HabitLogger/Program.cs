@@ -11,7 +11,6 @@ class Program
         while (menuSelection != "0")
         {
             Console.Clear();
-
             Console.WriteLine("Welcome to the Habit Logger App in C#");
             Console.WriteLine("------------------------\n");
 
@@ -83,12 +82,13 @@ class Program
                     connection.Open();
                     // C->Create
                     //It should also create a table in the database, where the habit will be logged.
-                    CreateHabitsTable(connection);
+                    // CreateHabitsTable(connection);
+                    CreateTable(connection);
                 }
                 catch (SqliteException message)
                 {
                     Console.WriteLine(message.Message);
-                    Console.WriteLine(message.ErrorCode);   // Console.WriteLine(errorCode);
+                    Console.WriteLine(message.ErrorCode);
                 }
 
                 // call to CRUD Methods 
@@ -97,29 +97,32 @@ class Program
                 switch (menuSelection)
                 {
                     case "1": // show table in database
-                        DisplayAllTable(connection);
+                              // DisplayAllTable(connection);
 
+                        InsertHabit(connection);
+                        DisplayHabits(connection);
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
                         break;
 
                     case "2": // show all habits
-                        SeedHabitsTable(connection);
-                        DisplayAllHabits(connection);
+                        // SeedHabitsTable(connection);
+                        // DisplayAllHabits(connection);
+                        DisplayHabits(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
                         break;
 
                     case "3": // search and display info by habit - track by habit
-                        DisplayByHabit(connection);
+                        // DisplayByHabit(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
                         break;
 
                     case "4": // search and display info by unit of measurement - track by goal
-                        DisplayByGoal(connection);
+                        // DisplayByGoal(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
@@ -127,14 +130,14 @@ class Program
 
                     case "5": // insert - create new habit
                               // CreateNewHabit(connection);
-                        InsertNewHabit(connection);
+                              // InsertNewHabit(connection);
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
                         break;
 
                     case "6": // update - update one habit
                         // UpdateHabit(connection);
-                        UpdateRecord(connection);
+                        // UpdateRecord(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
@@ -142,7 +145,7 @@ class Program
 
                     case "7": // delete - delete one habit
                         // DeleteHabitById(connection, 3);
-                        DeleteHabit(connection);
+                        // DeleteHabit(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
@@ -150,7 +153,7 @@ class Program
 
                     case "8": // delete - delete all database 
                               // DeleteHabitById(connection, 12);
-                        DeleteDatabase(connection);
+                              // DeleteDatabase(connection);
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
                         break;
@@ -321,7 +324,7 @@ class Program
                     Console.Write("New Habit: ");
                     var habit = Console.ReadLine();
 
-                    while ((String.IsNullOrEmpty(habit)) || (habit.Length < 3))
+                    while (String.IsNullOrEmpty(habit) || (habit.Length < 3))
                     {
 
                         Console.Write("This is not a valid input. Please insert the New habit: ");
@@ -634,9 +637,6 @@ class Program
                 insertCommand.CommandText =
                 $"INSERT INTO habits(habit, goal) VALUES('{habit}', '{goal}')";
 
-                // insertCommand.Parameters.AddWithValue("$habit", habit);
-                // insertCommand.Parameters.AddWithValue("$goal", goal);
-
                 insertCommand.ExecuteNonQuery();
                 insertTransaction.Commit();
 
@@ -703,6 +703,107 @@ class Program
                 Console.WriteLine();
                 Console.WriteLine($"Habit: {newHabit}\t {newGoal} updated.");
             }
+        }
+
+
+        static void CreateTable(SqliteConnection connection)
+        {
+            var createTableCommand = connection.CreateCommand();
+
+            createTableCommand.CommandText =
+            @"
+                CREATE TABLE IF NOT EXISTS habits (
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    habit TEXT,
+                    goal TEXT, 
+                    date TEXT);   
+            ";
+
+            createTableCommand.ExecuteNonQuery();
+        }
+
+        static string GetHabitInput()
+        {
+            Console.WriteLine("\nPlease type the habit:");
+            string inputHabitt = Console.ReadLine();
+
+            return inputHabitt;
+        }
+
+        static string GetGoalInput()
+        {
+            Console.WriteLine("\nPlease type the goal:");
+            string inputGoal = Console.ReadLine();
+
+            return inputGoal;
+        }
+
+        static string GetDateInput()
+        {
+            Console.WriteLine("\nPlease type the date: (Format: dd-mm-yy).");
+            string inputDate = Console.ReadLine();
+
+            return inputDate;
+        }
+
+        static void InsertHabit(SqliteConnection connection)
+        {
+            var habit = GetHabitInput();
+            var goal = GetGoalInput();
+            var date = GetDateInput();
+
+            using (var insertTransaction = connection.BeginTransaction())
+            {
+                var insertCommand = connection.CreateCommand();
+
+                insertCommand.CommandText =
+                $"INSERT INTO habits(habit, goal, date) VALUES('{habit}', '{goal}', '{date}')";
+
+                insertCommand.ExecuteNonQuery();
+                insertTransaction.Commit();
+
+                Console.WriteLine();
+                Console.WriteLine($"Habit: {habit}\t{goal}\t{date} inserted.");
+            }
+        }
+
+        static void DisplayHabits(SqliteConnection connection)
+        {
+            var command = connection.CreateCommand();
+
+            command.CommandText =
+            @"
+                SELECT habit, goal, date
+                FROM habits;
+            ";
+
+            using (var reader = command.ExecuteReader())
+            {
+                Console.WriteLine("\nCurrent Logged Habits:\n");
+                Console.Write("{0,-20}", "Habit");
+                Console.Write("{0,-20}", "Goal");
+                Console.Write("{0,-20}", "Date");
+                Console.WriteLine();
+
+                if (reader.HasRows)
+                {
+                    const int FieldWidthRightAligned = -20;
+                    Console.WriteLine();
+
+                    while (reader.Read())
+                    {
+                        Console.Write($"{reader["habit"],FieldWidthRightAligned}");
+                        Console.Write($"{reader["goal"],FieldWidthRightAligned}");
+                        Console.Write($"{reader["date"],FieldWidthRightAligned}\n");
+                    }
+                    Console.WriteLine();
+                }
+                else
+                {
+                    Console.WriteLine("No habits found.");
+                }
+            }
+
         }
     }
 }

@@ -124,3 +124,7 @@ To write values in days or as Julian day values, set SqliteType to Real;
 <!-- WHERE habit = '% {$habit} %'; -->
 
 - LINQ: Runs SQL statements written like language constructs to query collections directly from inside .Net code
+
+git add .
+git commit -m " "
+git push -u origin main
