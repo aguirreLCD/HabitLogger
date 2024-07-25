@@ -513,3 +513,8 @@ DS_Store
 /consolehabits
 habits
 consolehabits
+
+git_log.txt
+log.log
+
+*.log

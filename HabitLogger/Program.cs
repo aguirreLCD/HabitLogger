@@ -1,10 +1,10 @@
-﻿using System.Data;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 
 class Program
 {
     static void Main(string[] args)
     {
+        // Handle user input
         string? readInputResult = "";
         string? menuSelection = "";
 
@@ -18,28 +18,20 @@ class Program
             // Ask the user to choose an option.
             Console.WriteLine("Your main menu options are:");
             Console.WriteLine("------------------------\n");
-
             // view table - view
             Console.WriteLine("1. To display the all current table in database, type: 1");
-
             // view habit - view
             Console.WriteLine("2. To display the all current (logged) habits, type: 2");
-
             // track by habit - search
             Console.WriteLine("3. To search specific habit, type: 3");
-
             // track by goal - search
             Console.WriteLine("4. To search habits related to your goal, type: 4");
-
             // register one habit - insert
             Console.WriteLine("5. To create new habit, type: 5");
-
             // update one habit - update
             Console.WriteLine("6. To update an habit, type: 6");
-
             // delete one habit - delete
             Console.WriteLine("7. To delete an habit, type: 7");
-
             // delete all habits - delete
             Console.WriteLine("8. To delete all habits, type: 8");
 
@@ -74,6 +66,7 @@ class Program
                 }
             }
 
+            // create DB, Table, open connection
             // When the application starts, it should create a sqlite database, if one isn’t present.
             const string dataBaseFile = "consolehabits.db";
 
@@ -98,7 +91,9 @@ class Program
                     Console.WriteLine(message.ErrorCode);   // Console.WriteLine(errorCode);
                 }
 
-                // call to CRUD Methods
+                // call to CRUD Methods 
+                // -> DB and table are already created 
+                // -> connection already open 
                 switch (menuSelection)
                 {
                     case "1": // show table in database
@@ -169,8 +164,9 @@ class Program
             // // Clean up
             // File.Delete(dataBaseFile);
             // Console.WriteLine("The DataBase file was deleted.");
-
         }
+
+        // Class Library Methods to perform CRUD operations
 
         static void CreateHabitsTable(SqliteConnection connection)
         {
@@ -325,8 +321,21 @@ class Program
                     Console.Write("New Habit: ");
                     var habit = Console.ReadLine();
 
+                    while ((String.IsNullOrEmpty(habit)) || (habit.Length < 3))
+                    {
+
+                        Console.Write("This is not a valid input. Please insert the New habit: ");
+                        habit = Console.ReadLine();
+                    }
+
                     Console.Write("New goal: ");
                     var goal = Console.ReadLine();
+
+                    while (String.IsNullOrEmpty(goal) || (goal.Length < 3))
+                    {
+                        Console.Write("This is not a valid input. Please insert the New goal: ");
+                        goal = Console.ReadLine();
+                    }
 
                     var command = connection.CreateCommand();
 
@@ -536,7 +545,6 @@ class Program
             }
         }
 
-
         static void DeleteHabit(SqliteConnection connection)
         {
             try
@@ -603,8 +611,21 @@ class Program
             Console.Write("New Habit: ");
             var habit = Console.ReadLine();
 
+            // validation for input string => empty, null, too short
+            while (String.IsNullOrEmpty(habit) || (habit.Length < 3))
+            {
+                Console.Write("This is not a valid input. Please insert the new Habit: ");
+                habit = Console.ReadLine();
+            }
+
             Console.Write("New goal: ");
             var goal = Console.ReadLine();
+
+            while (String.IsNullOrEmpty(goal) || (goal.Length < 3))
+            {
+                Console.Write("This is not a valid input. Please insert the New goal: ");
+                goal = Console.ReadLine();
+            }
 
             using (var insertTransaction = connection.BeginTransaction())
             {
@@ -677,13 +698,11 @@ class Program
                 $"UPDATE habits SET habit = '{newHabit}', goal = '{newGoal}' WHERE habit = '{habit}'";
 
                 updateRecordCommand.ExecuteNonQuery();
-
                 updateTransaction.Commit();
 
                 Console.WriteLine();
                 Console.WriteLine($"Habit: {newHabit}\t {newGoal} updated.");
             }
-
         }
     }
 }

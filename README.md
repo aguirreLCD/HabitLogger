@@ -7,6 +7,7 @@ This is a simple project to learn how to:
 - use SQLite;
 - use SQLite with C# in VSCode;
 - debug;
+- documentation;
 
 ## Using Visual Studio Code:
 
@@ -97,6 +98,13 @@ To write values in days or as Julian day values, set SqliteType to Real;
 - [] reviewing, connecting pieces, reinforcing learning topics;
 - [] Validation for user input;
 - [] Keep practicing;
+- [] Improve README file;
+- [] Improve documentation;
+- [] Implement Lists;
+- [] Export git log history to a text file:
+  git log -p --all > git_log.txt
+  git log --pretty=format:"%ad - %an: %s" > git_log.txt
+  git log --pretty=format:'%h was %an, %ar, message: %s' > log.log
 
 ## Learning topics:
 
