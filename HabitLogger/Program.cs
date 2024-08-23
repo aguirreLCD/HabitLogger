@@ -18,9 +18,9 @@ class Program
             Console.WriteLine("Your main menu options are:");
             Console.WriteLine("------------------------\n");
             // view table - view
-            Console.WriteLine("1. To display the all current table in database, type: 1");
+            Console.WriteLine("1. To display all current table in database, type: 1");
             // view habit - view
-            Console.WriteLine("2. To display the all current (logged) habits, type: 2");
+            Console.WriteLine("2. To display all current (logged) habits, type: 2");
             // track by habit - search
             Console.WriteLine("3. To search specific habit, type: 3");
             // track by goal - search
@@ -99,7 +99,7 @@ class Program
                     case "1": // show table in database
                               // DisplayAllTable(connection);
 
-                        InsertHabit(connection);
+                        // InsertHabit(connection);
                         DisplayHabits(connection);
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
@@ -115,14 +115,14 @@ class Program
                         break;
 
                     case "3": // search and display info by habit - track by habit
-                        // DisplayByHabit(connection);
+                        DisplayByHabit(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
                         break;
 
                     case "4": // search and display info by unit of measurement - track by goal
-                        // DisplayByGoal(connection);
+                        DisplayByGoal(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
@@ -131,12 +131,13 @@ class Program
                     case "5": // insert - create new habit
                               // CreateNewHabit(connection);
                               // InsertNewHabit(connection);
+                        InsertHabit(connection);
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
                         break;
 
                     case "6": // update - update one habit
-                        // UpdateHabit(connection);
+                        UpdateHabit(connection);
                         // UpdateRecord(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
@@ -145,7 +146,7 @@ class Program
 
                     case "7": // delete - delete one habit
                         // DeleteHabitById(connection, 3);
-                        // DeleteHabit(connection);
+                        DeleteHabit(connection);
 
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
@@ -153,7 +154,7 @@ class Program
 
                     case "8": // delete - delete all database 
                               // DeleteHabitById(connection, 12);
-                              // DeleteDatabase(connection);
+                        DeleteDatabase(connection);
                         Console.WriteLine("\n\rPress the Enter key to continue.");
                         readInputResult = Console.ReadLine();
                         break;
